@@ -27,11 +27,16 @@ app.use((req, res, next) => {
         'Access-Control-Allow-Methods',
         'GET, POST, PUT, DELETE, PATCH, OPTIONS'
     )
+
     next()
 })
 
 app.use('/api/stuff', stuffRoutes)
 app.use('/api/auth', userRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
+
+app.options('/*', (_, res) => {
+    res.sendStatus(200)
+})
 
 module.exports = app
