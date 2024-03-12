@@ -12,8 +12,9 @@ mongoose
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'))
 
-const stuffRoutes = require('./routes/stuff')
+const stuffRoutes = require('./routes/stuff') // Need to delete later
 const userRoutes = require('./routes/user')
+const bookRoutes = require('./routes/book')
 
 app.use(express.json())
 
@@ -31,7 +32,8 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use('/api/stuff', stuffRoutes)
+app.use('/api/books', bookRoutes)
+app.use('/api/stuff', stuffRoutes) // Need to delete later
 app.use('/api/auth', userRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
