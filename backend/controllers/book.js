@@ -61,14 +61,13 @@ exports.createBook = (req, res, next) => {
 
     book.save()
         .then(() => {
-            res.status(201).json({ message: 'Objet enregistré !' })
+            res.status(201).json({ message: 'Book created!' })
         })
         .catch((error) => {
             res.status(400).json({ error })
         })
 }
 
-// Useless cause route not activated for now
 exports.createRating = (req, res, next) => {
     const ratingObject = JSON.parse(req.body.rating)
     delete ratingObject._userId
@@ -120,12 +119,17 @@ exports.modifyBook = (req, res, next) => {
             if (book.userId != req.auth.userId) {
                 res.status(401).json({ message: 'Not authorized' })
             } else {
+                const filename = book.imageUrl.split('/images/')[1]
+                fs.unlink(`images/${filename}`, (error) => {
+                    if (error) throw error
+                    console.log('Old picture deleted')
+                })
                 Book.updateOne(
                     { _id: req.params.id },
                     { ...bookObject, _id: req.params.id }
                 )
                     .then(() =>
-                        res.status(200).json({ message: 'Objet modifié!' })
+                        res.status(200).json({ message: 'Book modified!' })
                     )
                     .catch((error) => res.status(401).json({ error }))
             }
@@ -147,7 +151,7 @@ exports.deleteBook = (req, res, next) => {
                     Book.deleteOne({ _id: req.params.id })
                         .then(() => {
                             res.status(200).json({
-                                message: 'Objet supprimé !',
+                                message: 'Book deleted !',
                             })
                         })
                         .catch((error) => res.status(401).json({ error }))
