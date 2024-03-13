@@ -79,9 +79,10 @@ exports.createRating = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             const newRatings = [...book.ratings, rating]
-            const newAverageRating =
+            let newAverageRating =
                 newRatings.reduce((total, next) => total + next.grade, 0) /
                 newRatings.length
+            newAverageRating = Math.floor(newAverageRating * 100) / 100
             Book.updateOne(
                 { _id: req.params.id },
                 {
