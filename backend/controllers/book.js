@@ -112,13 +112,19 @@ exports.modifyBook = (req, res, next) => {
               }`,
           }
         : { ...req.body }
-
     delete bookObject._userId
+
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
                 res.status(401).json({ message: 'Not authorized' })
             } else {
+                if (bookObject.imageUrl) {
+                    const filename = book.imageUrl.split('/images/')[1]
+                    fs.unlink(`images/${filename}`, (error) => {
+                        if (error) throw error
+                    })
+                }
                 Book.updateOne(
                     { _id: req.params.id },
                     { ...bookObject, _id: req.params.id }
