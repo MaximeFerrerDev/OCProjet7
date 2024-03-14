@@ -20,10 +20,14 @@ exports.getOneBook = (req, res, next) => {
         _id: req.params.id,
     })
         .then((book) => {
-            res.status(200).json(book)
+            if (book) {
+                res.status(200).json(book)
+            } else {
+                res.status(404).json({ error: 'Book not found' })
+            }
         })
         .catch((error) => {
-            res.status(404).json({
+            res.status(400).json({
                 error: error,
             })
         })
@@ -97,7 +101,7 @@ exports.createRating = (req, res, next) => {
                 .then(() => {
                     // Getting the updated book to send it back
                     Book.findOne({ _id: req.params.id }).then((book) => {
-                        res.status(200).json(book)
+                        res.status(201).json(book)
                     })
                 })
                 .catch((error) => res.status(401).json({ error }))
@@ -122,7 +126,7 @@ exports.modifyBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
-                res.status(401).json({ message: 'Not authorized' })
+                res.status(401).json({ error: 'Not authorized' })
             } else {
                 // If the modification changed the image, deleting the old one
                 if (bookObject.imageUrl) {
@@ -136,7 +140,7 @@ exports.modifyBook = (req, res, next) => {
                     { ...bookObject, _id: req.params.id }
                 )
                     .then(() =>
-                        res.status(200).json({ message: 'Book modified!' })
+                        res.status(200).json({ error: 'Book modified!' })
                     )
                     .catch((error) => res.status(401).json({ error }))
             }
@@ -151,7 +155,7 @@ exports.deleteBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
-                res.status(401).json({ message: 'Not authorized' })
+                res.status(401).json({ error: 'Not authorized' })
             } else {
                 const filename = book.imageUrl.split('/images/')[1]
                 fs.unlink(`images/${filename}`, () => {
