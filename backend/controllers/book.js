@@ -69,6 +69,7 @@ exports.createBook = (req, res, next) => {
 }
 
 exports.createRating = (req, res, next) => {
+    // Getting the new rating object
     const ratingObject = JSON.parse(req.body.rating)
     delete ratingObject._userId
     const rating = new Rating({
@@ -77,11 +78,14 @@ exports.createRating = (req, res, next) => {
     })
     Book.findOne({ _id: req.params.id })
         .then((book) => {
+            // Creating the new ratings array for the book
             const newRatings = [...book.ratings, rating]
+            // Computing and rounding up the new average rating
             let newAverageRating =
                 newRatings.reduce((total, next) => total + next.grade, 0) /
                 newRatings.length
             newAverageRating = Math.floor(newAverageRating * 100) / 100
+            // Updating the book with the new rating
             Book.updateOne(
                 { _id: req.params.id },
                 {
@@ -91,6 +95,7 @@ exports.createRating = (req, res, next) => {
                 }
             )
                 .then(() => {
+                    // Getting the updated book to send it back
                     Book.findOne({ _id: req.params.id }).then((book) => {
                         res.status(200).json(book)
                     })
@@ -119,6 +124,7 @@ exports.modifyBook = (req, res, next) => {
             if (book.userId != req.auth.userId) {
                 res.status(401).json({ message: 'Not authorized' })
             } else {
+                // If the modification changed the image, deleting the old one
                 if (bookObject.imageUrl) {
                     const filename = book.imageUrl.split('/images/')[1]
                     fs.unlink(`images/${filename}`, (error) => {
