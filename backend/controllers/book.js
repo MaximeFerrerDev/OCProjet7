@@ -126,7 +126,7 @@ exports.modifyBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
-                res.status(401).json({ error: 'Not authorized' })
+                res.status(403).json({ error: 'Unauthorized request' })
             } else {
                 // If the modification changed the image, deleting the old one
                 if (bookObject.imageUrl) {
@@ -155,7 +155,7 @@ exports.deleteBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
-                res.status(401).json({ error: 'Not authorized' })
+                res.status(403).json({ error: 'Unauthorized request' })
             } else {
                 const filename = book.imageUrl.split('/images/')[1]
                 fs.unlink(`images/${filename}`, () => {
