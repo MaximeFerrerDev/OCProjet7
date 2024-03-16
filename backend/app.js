@@ -6,9 +6,7 @@ const app = express()
 
 const mongoose = require('mongoose')
 mongoose
-    .connect(
-        'mongodb+srv://admin:admin@cluster0.kl09u4n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-    )
+    .connect(process.env.DATABASE_SRV_ADDRESS)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'))
 
