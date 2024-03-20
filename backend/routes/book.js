@@ -6,20 +6,21 @@ const multer = require('../middleware/multer-config')
 const sharp = require('../middleware/sharp')
 
 const bookCtrl = require('../controllers/book')
+const ratingCtrl = require('../controllers/rating')
 
 // Unauthentified routes
 // GET
-router.get('/', bookCtrl.getAllBooks) // Working !
-router.get('/bestrating', bookCtrl.getBestRating) // Working !
-router.get('/:id', bookCtrl.getOneBook) // Working !
+router.get('/', bookCtrl.getAllBooks)
+router.get('/bestrating', ratingCtrl.getBestRating)
+router.get('/:id', bookCtrl.getOneBook)
 
 // Authentified routes
 // POST
-router.post('/', auth, multer, sharp, bookCtrl.createBook) // Working !
-router.post('/:id/rating', auth, bookCtrl.createRating) // Working !
+router.post('/', auth, multer, sharp, bookCtrl.createBook)
+router.post('/:id/rating', auth, ratingCtrl.createRating)
 // // PUT
-router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook) // Working !
+router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook)
 // // DELETE
-router.delete('/:id', auth, bookCtrl.deleteBook) // Working !
+router.delete('/:id', auth, bookCtrl.deleteBook)
 
 module.exports = router
